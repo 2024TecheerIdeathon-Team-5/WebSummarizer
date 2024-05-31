@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 import mysql.connector
 import os
 from dotenv import load_dotenv
-from models.text_classifier import classify_text, summarize_text
 from summarize import summarize_url
 from flask_cors import CORS
 
@@ -23,18 +22,6 @@ def get_db_connection():
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/summarize', methods=['POST'])
-def summarize_url_route():
-    url = request.json.get('url')
-    if not url:
-        return jsonify({'error': 'URL is required'}), 400
-    
-    try:
-        summary = summarize_url(url)
-        return jsonify({'url': url, 'summary': summary})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/articles', methods=['GET'])
 def get_articles():
@@ -59,19 +46,27 @@ def get_articles():
             conn.close()
 
 
+@app.route('/articles', methods=['POST'])
+def summarize_url_route():
+    url = request.json.get('url')
+    if not url:
+        return jsonify({'error': 'URL is required'}), 400
+    
+    try:
+        result = summarize_url(url)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/articles/<int:id>', methods=['DELETE'])
 def delete_article(id):
     conn = None
     cursor = None
     try:
-        # Connect to the database
         conn = get_db_connection()
         cursor = conn.cursor()
-
-        # Delete the article with the given ID
         cursor.execute("DELETE FROM Article WHERE id = %s", (id,))
         conn.commit()
-
         return jsonify({'message': 'Article deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
