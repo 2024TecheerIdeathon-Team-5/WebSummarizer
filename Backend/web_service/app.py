@@ -31,26 +31,27 @@ def summarize_url_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/prob')
-def prob():
+@app.route('/delete_article/<int:id>', methods=['DELETE'])
+def delete_article(id):
     conn = None
     cursor = None
     try:
+        # Connect to the database
         conn = get_db_connection()
         cursor = conn.cursor()
-        
-        cursor.execute("SELECT * FROM bookmark")
-        bookmark = cursor.fetchall()
-        
-        cursor.execute("SELECT * FROM category")
-        category = cursor.fetchall()
+
+        # Delete the article with the given ID
+        cursor.execute("DELETE FROM Article WHERE id = %s", (id,))
+        conn.commit()
+
+        return jsonify({'message': 'Article deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     finally:
         if cursor is not None:
             cursor.close()
         if conn is not None:
             conn.close()
-    
-    return render_template('prob.html', bookmark=bookmark, category=category)
 
 if __name__ == '__main__':
     app.run(debug=True)
