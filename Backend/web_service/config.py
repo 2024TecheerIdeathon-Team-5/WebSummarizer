@@ -1,4 +1,4 @@
 MYSQL_HOST = 'localhost'
-MYSQL_USER = 'yourusername'
-MYSQL_PASSWORD = 'yourpassword'
-MYSQL_DB = 'web_service'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'root'
+MYSQL_DB = 'techeerdb'
