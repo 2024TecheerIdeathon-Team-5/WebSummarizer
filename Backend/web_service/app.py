@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from dbconfig import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
 from models.text_classifier import classify_text, summarize_text
-
+from summarize import summarize_url
 
 app = Flask(__name__)
 
