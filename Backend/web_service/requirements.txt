@@ -4,3 +4,5 @@ requests
 beautifulsoup4
 scikit-learn
 joblib
+openai==0.28
+python-dotenv
