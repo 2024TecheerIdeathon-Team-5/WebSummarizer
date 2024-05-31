@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,25 +8,32 @@
 <body>
     <h1>URL Summarizer</h1>
     <form id="urlForm" method="POST">
-        <label for="urls">Enter URLs (one per line):</label><br>
-        <textarea id="urls" name="urls" rows="10" cols="50"></textarea><br><br>
+        <label for="url">Enter a URL:</label><br>
+        <input type="text" id="url" name="url" size="50"><br><br>
         <input type="submit" value="Summarize">
     </form>
     <div id="results"></div>
     
     <script>
         document.getElementById('urlForm').onsubmit = async (event) => {
-            event.preventDefault();
-            const urls = document.getElementById('urls').value.split('\n').map(url => url.trim()).filter(url => url);
+            event.preventDefault(); // 폼의 기본 제출 동작을 막음
+            const url = document.getElementById('url').value.trim();
             const response = await fetch('/summarize', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ urls })
+                body: JSON.stringify({ url })
             });
-            const results = await response.json();
-            document.getElementById('results').innerHTML = JSON.stringify(results, null, 2);
+            const result = await response.json();
+            if (result.error) {
+                document.getElementById('results').innerHTML = `<p>Error: ${result.error}</p>`;
+            } else {
+                document.getElementById('results').innerHTML = `
+                    <p><strong>URL:</strong> ${result.url}</p>
+                    <p><strong>Summary:</strong> ${result.summary}</p>
+                `;
+            }
         };
     </script>
 </body>
