@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify
+# app.py
+
+from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
 from models.text_classifier import classify_text, summarize_text
@@ -13,6 +15,10 @@ def get_db_connection():
         database=MYSQL_DB
     )
     return conn
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/summarize', methods=['POST'])
 def summarize_urls():
