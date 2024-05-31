@@ -4,8 +4,11 @@ import os
 from dotenv import load_dotenv
 from models.text_classifier import classify_text, summarize_text
 from summarize import summarize_url
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, supports_credentials=True)
+
 load_dotenv()
 
 def get_db_connection():
@@ -79,4 +82,4 @@ def delete_article(id):
             conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
