@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-from dbconfig import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
+import os
+from dotenv import load_dotenv
 from models.text_classifier import classify_text, summarize_text
 from summarize import summarize_url
 
 app = Flask(__name__)
+load_dotenv()
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host=MYSQL_HOST,
-        user=MYSQL_USER,
-        password=MYSQL_PASSWORD,
-        database=MYSQL_DB
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DB")
     )
     return conn
 
@@ -30,6 +32,29 @@ def summarize_url_route():
         return jsonify({'url': url, 'summary': summary})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/articles', methods=['GET'])
+def get_articles():
+    conn = None
+    cursor = None
+    try:
+        # Connect to the database
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Query to select all articles
+        cursor.execute("SELECT * FROM Article")
+        articles = cursor.fetchall()
+
+        return jsonify({'articles': articles}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
 
 @app.route('/articles/<int:id>', methods=['DELETE'])
 def delete_article(id):
