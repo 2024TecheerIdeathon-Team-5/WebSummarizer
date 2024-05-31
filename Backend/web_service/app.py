@@ -3,8 +3,10 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 from summarize import summarize_url
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, supports_credentials=True)
 
 load_dotenv()
 
@@ -75,4 +77,4 @@ def delete_article(id):
             conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
