@@ -1,0 +1,34 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Summarizer</title>
+</head>
+<body>
+    <h1>URL Summarizer</h1>
+    <form id="urlForm" method="POST">
+        <label for="urls">Enter URLs (one per line):</label><br>
+        <textarea id="urls" name="urls" rows="10" cols="50"></textarea><br><br>
+        <input type="submit" value="Summarize">
+    </form>
+    <div id="results"></div>
+    
+    <script>
+        document.getElementById('urlForm').onsubmit = async (event) => {
+            event.preventDefault();
+            const urls = document.getElementById('urls').value.split('\n').map(url => url.trim()).filter(url => url);
+            const response = await fetch('/summarize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ urls })
+            });
+            const results = await response.json();
+            document.getElementById('results').innerHTML = JSON.stringify(results, null, 2);
+        };
+    </script>
+</body>
+</html>
