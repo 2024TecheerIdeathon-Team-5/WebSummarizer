@@ -31,7 +31,7 @@ def summarize_url_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/delete_article/<int:id>', methods=['DELETE'])
+@app.route('/articles/<int:id>', methods=['DELETE'])
 def delete_article(id):
     conn = None
     cursor = None
